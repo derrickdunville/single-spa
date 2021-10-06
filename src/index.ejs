@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Root Config</title>
+  <title>Bittrex Scanner</title>
   <!--
     Remove this if you only support browsers that support async/await.
     This is needed by babel to share largeish helper code for compiling async/await in older
@@ -15,7 +15,10 @@
     This CSP allows any SSL-enabled host and for arbitrary eval(), but you should limit these directives further to increase your app's security.
     Learn more about CSP policies at https://content-security-policy.com/#directive
   -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: localhost:*; script-src 'unsafe-inline' 'unsafe-eval' https: localhost:*; connect-src https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';">
+<!--        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: localhost:*; script-src 'unsafe-inline' 'unsafe-eval' https: localhost:*; connect-src https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';">-->
+<!--  <meta http-equiv="Content-Security-Policy" content="default-src 'self' http: http://dd-single-spa-root.s3-website-us-east-1.amazonaws.com/; script-src 'unsafe-inline' 'unsafe-eval' http: http://dd-single-spa-root.s3-website-us-east-1.amazonaws.com/; connect-src http: http://dd-single-spa-root.s3-website-us-east-1.amazonaws.com/ ws://dd-single-spa-root.s3-website-us-east-1.amazonaws.com/; style-src 'unsafe-inline' https:; object-src 'none';">-->
+<!--  <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">-->
+
   <meta name="importmap-type" content="systemjs-importmap" />
   <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
   <!-- More info at https://github.com/joeldenning/import-map-overrides/blob/master/docs/configuration.md#domain-list -->
@@ -34,7 +37,11 @@
       "imports": {
         "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.9.0/lib/system/single-spa.min.js",
         "react": "https://cdn.jsdelivr.net/npm/react@16.13.1/umd/react.production.min.js",
-        "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.production.min.js"
+        "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@16.13.1/umd/react-dom.production.min.js",
+        "@main/root-config": "https://bittrexscanner.com/main-root-config.js",
+        "@main/root": "https://bittrexscanner.com/main-root.js",
+        "@main/one": "https://bittrexscanner.com/main-one.js",
+        "@main/two": "https://bittrexscanner.com/main-two.js"
       }
     }
   </script>
@@ -44,16 +51,16 @@
   <!-- <script type="systemjs-importmap" src="/importmap.json"></script> -->
 
   <% if (isLocal) { %>
-  <script type="systemjs-importmap">
-    {
-      "imports": {
-        "@main/root-config": "//localhost:9001/main-root-config.js",1
-        "@main/root": "//localhost:9002/main-root.js",
-        "@main/one": "//localhost:9003/main-one.js",
-        "@main/two": "//localhost:9004/main-two.js",
-      }
-    }
-  </script>
+    <script type="systemjs-importmap">
+        {
+            "imports": {
+                "@main/root-config": "//localhost:9000/main-root-config.js",
+                "@main/root": "//localhost:9001/main-root.js",
+                "@main/one": "//localhost:9002/main-one.js",
+                "@main/two": "//localhost:9002/main-two.js"
+            }
+        }
+    </script>
   <% } %>
 
   <!--
@@ -70,12 +77,24 @@
   <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/system.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/systemjs@6.8.3/dist/extras/amd.min.js"></script>
   <% } %>
+
+  <template id="single-spa-layout">
+    <single-spa-router>
+      <div>
+        <application name="@main/root"></application>
+      </div>
+      <div class="main-content">
+        <route path="one">
+          <application name="@main/one"></application>
+        </route>
+        <route path="two">
+          <application name="@main/two"></application>
+        </route>
+      </div>
+    </single-spa-router>
+  </template>
 </head>
 <body>
-  <noscript>
-    You need to enable JavaScript to run this app.
-  </noscript>
-  <main></main>
   <script>
     System.import('@main/root-config');
   </script>

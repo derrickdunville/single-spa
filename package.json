@@ -8,7 +8,8 @@
     "check-format": "prettier --check .",
     "prepare": "husky install",
     "build": "concurrently npm:build:*",
-    "build:webpack": "webpack --mode=production"
+    "build:webpack": "webpack --mode=production",
+    "deploy": "npm run build && aws s3 sync dist/ s3://bittrexscanner.com --acl public-read"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
